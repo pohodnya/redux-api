@@ -104,17 +104,20 @@ export default function actionFn(url, name, options, ACTIONS={}, meta={}) {
       if (result && result.then) {
         ret = result.then(
           (data)=> {
-            const res = responseHandler(null, data);
+            const res = responseHandler(null, data, getState, dispatch);
             if (res === undefined) {
               return data;
             } else {
               return res;
             }
           },
-          err=> responseHandler(err)
+          (err)=> {
+            result && result.catch && result.catch(none);
+            return responseHandler(err, null, getState, dispatch);
+          }
         );
       } else {
-        ret = responseHandler(result);
+        ret = responseHandler(result, null, getState, dispatch);
       }
     }
     ret && ret.catch && ret.catch(none);

@@ -1295,17 +1295,18 @@ function actionFn(url, name, options) {
     if (responseHandler) {
       if (result && result.then) {
         ret = result.then(function (data) {
-          var res = responseHandler(null, data);
+          var res = responseHandler(null, data, getState, dispatch);
           if (res === undefined) {
             return data;
           } else {
             return res;
           }
         }, function (err) {
-          return responseHandler(err);
+          result && result.catch && result.catch(_helpers.none);
+          return responseHandler(err, null, getState, dispatch);
         });
       } else {
-        ret = responseHandler(result);
+        ret = responseHandler(result, null, getState, dispatch);
       }
     }
     ret && ret.catch && ret.catch(_helpers.none);
