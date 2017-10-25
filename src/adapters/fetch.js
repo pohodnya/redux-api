@@ -21,7 +21,9 @@ function toJSON(resp) {
 export default function (fetch) {
   return (url, opts)=> fetch(url, opts).then((resp)=> {
     if (resp.status >= 400) {
-      return Promise.reject({ status: resp.status, statusText: resp.statusText });
+      return toJSON(resp).then((data)=> {
+        return Promise.reject({ status: resp.status, statusText: resp.statusText, response: data });
+      });
     } else {
       return toJSON(resp).then((data)=> {
         if (resp.status >= 200 && resp.status < 300) {
